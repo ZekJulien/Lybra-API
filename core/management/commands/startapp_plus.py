@@ -42,7 +42,7 @@ class Command(BaseCommand):
             os.makedirs(path, exist_ok=True)
             init_file = os.path.join(path, '__init__.py')
             with open(init_file, 'w', encoding='utf-8') as f:
-                f.write(f"# Package {subdir} pour l'app {name}\n")
+                f.write(f"")
 
         # urls.py à la racine
         urls_path = os.path.join(app_dir, 'urls.py')
