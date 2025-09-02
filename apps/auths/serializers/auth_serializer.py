@@ -5,6 +5,7 @@ from rest_framework.validators import UniqueValidator
 from auths.models import Auth
 
 class AuthSerializer(serializers.ModelSerializer):
+    """Handles user registration with email uniqueness, password strength, and confirmation validation."""
     email = serializers.EmailField(
         required=True,
         validators=[

@@ -6,6 +6,7 @@ from django.db.models import Q
 from auths.managers import AuthManager
 
 class Auth(AbstractBaseUser, PermissionsMixin):
+    """Custom user model with email as username and role-based constraints."""
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

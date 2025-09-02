@@ -9,7 +9,7 @@ from auths.services import AuthService
 from auths.permissions import IsFirstUser, IsAdminUser
 
 class AuthView(ViewSet):
-
+    """ViewSet for user-related operations including registration, admin initialization, and employee creation."""
     @extend_schema(
         request=AuthSerializer,
         responses={
@@ -21,6 +21,7 @@ class AuthView(ViewSet):
     )
     @action(detail=False, methods=['post'], url_path='init', permission_classes=[IsFirstUser])
     def init_admin(self, request):
+        """Creates the first admin user if no users exist."""
         serializer = AuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         AuthService.add_admin(serializer.validated_data)
@@ -37,6 +38,7 @@ class AuthView(ViewSet):
     )
     @action(detail=False, methods=['post'], url_path='register')
     def create_user(self, request):
+        """Creates a regular user."""
         serializer = AuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         AuthService.add(serializer.validated_data)
@@ -53,6 +55,7 @@ class AuthView(ViewSet):
     )
     @action(detail=False, methods=['post'], url_path='employee', permission_classes=[IsAdminUser])
     def create_employee(self, request):
+        """Creates an employee user. Only accessible by admin users."""
         serializer = AuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         AuthService.add_employee(serializer.validated_data)
