@@ -1,8 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 
-urlpatterns = []
-
+urlpatterns = [
+    path('auth/', include('auths.urls')),
+]
 
 #region SWAGGER
 if settings.DEBUG:
@@ -14,7 +15,7 @@ if settings.DEBUG:
 
     urlpatterns += [
         path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-        path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-        path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+        path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     ]
 #endregion

@@ -24,13 +24,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'core'
+    'core',
+    'auths'
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'EXCEPTION_HANDLER': 'core.exceptions.custom_exception_handler'
 }
 
 MIDDLEWARE = [
@@ -63,7 +66,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fr-be'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'Europe/Brussels'
 
@@ -83,6 +86,8 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
 }
+
+AUTH_USER_MODEL = 'auths.Auth'
 
 
 
