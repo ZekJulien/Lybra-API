@@ -1,14 +1,16 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from uuid import UUID
 
 from auths.schemas import auth_schema
 from auths.serializers import AuthSerializer
 from auths.services import AuthService
 from auths.permissions import IsFirstUser, IsAdminUser
+
 
 @auth_schema
 class AuthView(ViewSet):
@@ -40,12 +42,23 @@ class AuthView(ViewSet):
 
     @action(detail=False, methods=['post'], url_path='token')
     def token(self, request):
+        """Generates JWT tokens for user authentication and update last_login."""
         serializer = TokenObtainPairSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        AuthService.update_last_login(serializer.user.id)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='token/refresh')
     def token_refresh(self, request):
+        """Generates new access tokens with JWT."""
         serializer = TokenRefreshSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='me', permission_classes=[IsAuthenticated])
+    def get_me(self, request):
+        """Retrieves the authenticated user's details."""
+        user = AuthService.me(request.user.id)
+        serializer = AuthSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

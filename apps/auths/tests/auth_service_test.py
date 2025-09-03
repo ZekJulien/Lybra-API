@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 from rest_framework.test import APIClient
 from auths.services import AuthService
@@ -8,7 +10,6 @@ def test_create_admin_success():
     data = {
         "email": "admin@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     }
 
     admin = AuthService.add_admin(data)
@@ -22,12 +23,10 @@ def test_create_second_admin_should_fail():
     data1 = {
         "email": "admin1@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     }
     data2 = {
         "email": "admin2@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     }
 
     AuthService.add_admin(data1)
@@ -40,13 +39,11 @@ def test_create_employee():
     admin = AuthService.add_admin({
         "email": "admin@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     })
 
     data = {
         "email": "employee@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     }
 
     employee = AuthService.add_employee(data)
@@ -59,7 +56,6 @@ def test_create_user():
     data = {
         "email": "user@example.com",
         "password": "Secure123A",
-        "password_verification": "Secure123A"
     }
 
     employee = AuthService.add(data)
@@ -107,3 +103,23 @@ def test_token_refresh_success():
 
     assert response.status_code == 200
     assert "access" in response.data
+
+@pytest.mark.django_db
+def test_auth_service_me_returns_user():
+    user = Auth.objects.create_user(
+        email="test@example.com",
+        password="securepassword123"
+    )
+
+    result = AuthService.me(user.id)
+
+    assert result is not None
+    assert result.id == user.id
+    assert result.email == "test@example.com"
+
+@pytest.mark.django_db
+def test_auth_service_me_returns_none_for_unknown_uuid():
+    unknown_uuid = uuid4()
+    result = AuthService.me(unknown_uuid)
+
+    assert result is None

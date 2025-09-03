@@ -31,10 +31,12 @@ class AuthSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Auth
-        fields = ['email', 'password', 'password_verification']
+        fields = ['email', 'password', 'password_verification', 'last_login', 'date_joined']
+
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_verification']:
             raise serializers.ValidationError("Passwords do not match.")
+        attrs.pop('confirmed_password', None)
         return attrs
 
