@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.test import APIClient
 from auths.services import AuthService
 from auths.models import Auth
 
@@ -65,3 +66,44 @@ def test_create_user():
 
     assert employee.email == data["email"]
     assert employee.role == "user"
+
+@pytest.mark.django_db
+def test_token_obtain_success():
+    client = APIClient()
+
+    Auth.objects.create_user(
+        email="user@example.com",
+        password="Secure123A"
+    )
+
+    response = client.post("/auth/token/", {
+        "email": "user@example.com",
+        "password": "Secure123A"
+    })
+
+    assert response.status_code == 200
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+@pytest.mark.django_db
+def test_token_refresh_success():
+    client = APIClient()
+
+    user = Auth.objects.create_user(
+        email="user@example.com",
+        password="Secure123A"
+    )
+
+    token_response = client.post("/auth/token/", {
+        "email": "user@example.com",
+        "password": "Secure123A"
+    })
+
+    refresh_token = token_response.data["refresh"]
+
+    response = client.post("/auth/token/refresh/", {
+        "refresh": refresh_token
+    })
+
+    assert response.status_code == 200
+    assert "access" in response.data
