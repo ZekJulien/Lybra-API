@@ -2,6 +2,8 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResp
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from auths.serializers import AuthSerializer
+from auths.serializers.logout_serializer import LogoutRequestSerializer
+
 
 class TokenResponseSerializer(serializers.Serializer):
     access = serializers.CharField()
@@ -45,11 +47,29 @@ refresh_schema = extend_schema(
     description="Refresh the JWT token"
 )
 
-get_me = extend_schema(
+get_me_schema = extend_schema(
     responses=AuthSerializer,
     summary="Get current user info",
     description="Get email, last_login and date_joined about user.",
 )
+
+logout_schema = extend_schema(
+    request=LogoutRequestSerializer,
+    responses={
+        205: OpenApiResponse(
+            description=(
+                "Logout successful — no content returned. "
+                "Client should reset view.\n\n"
+                "**Headers:**\n"
+                "`Clear-Site-Data: \"cache, cookies\"` — Indicates which client-side data should be cleared."
+            )
+        )
+    },
+    summary="Logout",
+    description="Invalidate and blacklist the refresh token. Returns 205 to signal client-side reset."
+)
+
+
 
 auth_schema = extend_schema_view(
     token=token_schema,
@@ -57,7 +77,8 @@ auth_schema = extend_schema_view(
     init_admin=init_admin_schema,
     create_user=create_user_schema,
     create_employee=create_employee_schema,
-    get_me=get_me
+    get_me=get_me_schema,
+    logout=logout_schema,
 )
 
 

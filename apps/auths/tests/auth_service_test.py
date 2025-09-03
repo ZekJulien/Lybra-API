@@ -2,8 +2,13 @@ from uuid import uuid4
 
 import pytest
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from auths.services import AuthService
 from auths.models import Auth
+from shared.exceptions import AuthServiceError
+from rest_framework import status
 
 @pytest.mark.django_db
 def test_create_admin_success():
@@ -118,8 +123,41 @@ def test_auth_service_me_returns_user():
     assert result.email == "test@example.com"
 
 @pytest.mark.django_db
-def test_auth_service_me_returns_none_for_unknown_uuid():
+def test_auth_service_me_raises_for_unknown_uuid():
     unknown_uuid = uuid4()
-    result = AuthService.me(unknown_uuid)
 
-    assert result is None
+    with pytest.raises(AuthServiceError) as exc_info:
+        AuthService.me(unknown_uuid)
+
+    exc = exc_info.value
+    assert exc.status_code == status.HTTP_404_NOT_FOUND
+    assert "User not found" in str(exc)
+
+@pytest.mark.django_db
+def test_me_user_not_found():
+    with pytest.raises(AuthServiceError) as exc_info:
+        AuthService.me(uuid=uuid4())
+    assert exc_info.value.status_code == 404
+    assert "User not found" in str(exc_info.value)
+
+@pytest.mark.django_db
+def test_blacklist_refresh_token_valid():
+    user = Auth.objects.create_user(email="test@example.com", password="secure123")
+    refresh = RefreshToken.for_user(user)
+    token_str = str(refresh)
+
+    AuthService.blacklist_refresh_token(token_str)
+
+    jti = refresh["jti"]
+    assert BlacklistedToken.objects.filter(token__jti=jti).exists()
+
+@pytest.mark.django_db
+def test_blacklist_refresh_token_invalid():
+    invalid_token = "this.is.not.a.valid.token"
+
+    with pytest.raises(AuthServiceError) as exc_info:
+        AuthService.blacklist_refresh_token(invalid_token)
+
+    exc = exc_info.value
+    assert exc.status_code == status.HTTP_400_BAD_REQUEST
+    assert "invalid or already blacklisted" in str(exc)
