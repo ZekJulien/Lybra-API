@@ -42,9 +42,10 @@ class AuthView(ViewSet):
 
     @action(detail=False, methods=['post'], url_path='token')
     def token(self, request):
-        """Generates JWT tokens for user authentication."""
+        """Generates JWT tokens for user authentication and update last_login."""
         serializer = TokenObtainPairSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        AuthService.update_last_login(serializer.user.id)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='token/refresh')

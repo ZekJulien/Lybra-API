@@ -1,5 +1,7 @@
+from datetime import datetime
 from uuid import UUID
 from auths.models import Auth
+from django.utils.timezone import now
 
 
 class AuthService:
@@ -23,3 +25,10 @@ class AuthService:
     def me(uuid : UUID):
         """Retrieves the authenticated user's details."""
         return Auth.objects.filter(id=uuid).first()
+
+    @staticmethod
+    def update_last_login(user_id : UUID):
+        """Updates the last login for an authenticated user."""
+        user = Auth.objects.filter(id=user_id).first()
+        user.last_login = now()
+        user.save(update_fields=["last_login"])
