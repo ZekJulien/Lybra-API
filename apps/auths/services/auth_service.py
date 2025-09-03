@@ -1,9 +1,5 @@
 from uuid import UUID
-
 from auths.models import Auth
-from auths.serializers import AuthSerializer
-from shared.exceptions import AuthServiceError
-from rest_framework import status
 
 
 class AuthService:

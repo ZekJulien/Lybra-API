@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 from rest_framework.test import APIClient
 from auths.services import AuthService
@@ -101,3 +103,23 @@ def test_token_refresh_success():
 
     assert response.status_code == 200
     assert "access" in response.data
+
+@pytest.mark.django_db
+def test_auth_service_me_returns_user():
+    user = Auth.objects.create_user(
+        email="test@example.com",
+        password="securepassword123"
+    )
+
+    result = AuthService.me(user.id)
+
+    assert result is not None
+    assert result.id == user.id
+    assert result.email == "test@example.com"
+
+@pytest.mark.django_db
+def test_auth_service_me_returns_none_for_unknown_uuid():
+    unknown_uuid = uuid4()
+    result = AuthService.me(unknown_uuid)
+
+    assert result is None
