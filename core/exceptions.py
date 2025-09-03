@@ -22,7 +22,16 @@ def custom_exception_handler(exc, context):
             status=exc.status_code
         )
 
+    error_type = exc.__class__.__name__
+    error_message = str(exc)
+
+    fallback_status = status.HTTP_400_BAD_REQUEST if error_type.endswith(
+        "Error") else status.HTTP_500_INTERNAL_SERVER_ERROR
+
     return Response(
-        {"detail": "An unexpected error occurred. Please try again later."},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        {
+            "detail": error_message,
+            "type": error_type
+        },
+        status=fallback_status
     )

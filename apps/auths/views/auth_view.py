@@ -4,7 +4,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-from uuid import UUID
 
 from auths.schemas import auth_schema
 from auths.serializers import AuthSerializer
@@ -61,4 +60,14 @@ class AuthView(ViewSet):
         user = AuthService.me(request.user.id)
         serializer = AuthSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path="logout")
+    def logout(self, request):
+        """Logs out the user by blacklisting the refresh token."""
+        refresh_token = request.data.get("refresh")
+        if not refresh_token:
+            return Response({"detail": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        AuthService.blacklist_refresh_token(refresh_token)
+        return Response({"detail": "Logout successfully."}, status=status.HTTP_205_RESET_CONTENT)
+
 
