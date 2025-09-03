@@ -1,14 +1,16 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from uuid import UUID
 
 from auths.schemas import auth_schema
 from auths.serializers import AuthSerializer
 from auths.services import AuthService
 from auths.permissions import IsFirstUser, IsAdminUser
+
 
 @auth_schema
 class AuthView(ViewSet):
@@ -49,3 +51,6 @@ class AuthView(ViewSet):
         serializer = TokenRefreshSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+   
+
