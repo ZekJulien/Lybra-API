@@ -22,3 +22,8 @@ class AuthService:
     def add_employee(validated_data):
         """Creates an employee user."""
         return Auth.objects.create_employee(**validated_data)
+
+    @staticmethod
+    def me(uuid : UUID):
+        """Retrieves the authenticated user's details."""
+        return Auth.objects.filter(id=uuid).first()

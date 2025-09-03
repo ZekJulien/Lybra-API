@@ -42,15 +42,22 @@ class AuthView(ViewSet):
 
     @action(detail=False, methods=['post'], url_path='token')
     def token(self, request):
+        """Generates JWT tokens for user authentication."""
         serializer = TokenObtainPairSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='token/refresh')
     def token_refresh(self, request):
+        """Generates new access tokens with JWT."""
         serializer = TokenRefreshSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
-   
+    @action(detail=False, methods=['get'], url_path='me', permission_classes=[IsAuthenticated])
+    def get_me(self, request):
+        """Retrieves the authenticated user's details."""
+        user = AuthService.me(request.user.id)
+        serializer = AuthSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 

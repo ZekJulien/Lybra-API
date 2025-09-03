@@ -45,11 +45,19 @@ refresh_schema = extend_schema(
     description="Refresh the JWT token"
 )
 
+get_me = extend_schema(
+    responses=AuthSerializer,
+    summary="Get current user info",
+    description="Get email, last_login and date_joined about user.",
+)
 
 auth_schema = extend_schema_view(
     token=token_schema,
     token_refresh=refresh_schema,
     init_admin=init_admin_schema,
     create_user=create_user_schema,
-    create_employee=create_employee_schema
+    create_employee=create_employee_schema,
+    get_me=get_me
 )
+
+
