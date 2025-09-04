@@ -18,7 +18,7 @@ class Auth(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=20, choices=[('user', 'User'), ('admin', 'Admin'), ('employee', 'Employee')], default='user')
-    last_password_change = models.DateTimeField(default=now())
+    last_password_change = models.DateTimeField(default=now)
 
     objects = AuthManager()
 
