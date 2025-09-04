@@ -1,8 +1,7 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-from auths.serializers import AuthSerializer
-from auths.serializers.logout_serializer import LogoutRequestSerializer
+from auths.serializers import AuthSerializer, UpdatePasswordSerializers, LogoutRequestSerializer, \
+    CustomTokenRefreshSerializer, CustomTokenObtainPairSerializer
 
 
 class TokenResponseSerializer(serializers.Serializer):
@@ -34,15 +33,15 @@ create_employee_schema = extend_schema(
 )
 
 token_schema = extend_schema(
-    request=TokenObtainPairSerializer,
-    responses=TokenResponseSerializer,
+    request=CustomTokenObtainPairSerializer,
+    responses=CustomTokenObtainPairSerializer,
     summary="Login",
     description="Obtain a JWT token with email and password"
 )
 
 refresh_schema = extend_schema(
-    request=TokenRefreshSerializer,
-    responses=TokenResponseSerializer,
+    request=CustomTokenRefreshSerializer,
+    responses=CustomTokenRefreshSerializer,
     summary="Refresh",
     description="Refresh the JWT token"
 )
@@ -69,6 +68,15 @@ logout_schema = extend_schema(
     description="Invalidate and blacklist the refresh token. Returns 205 to signal client-side reset."
 )
 
+update_password_schema = extend_schema(
+    request=UpdatePasswordSerializers,
+    responses={
+        200: OpenApiResponse(description="Your password has been successfully updated.")
+    },
+    summary="Update Password",
+    description="Allows users to update their password."
+)
+
 
 
 auth_schema = extend_schema_view(
@@ -79,6 +87,7 @@ auth_schema = extend_schema_view(
     create_employee=create_employee_schema,
     get_me=get_me_schema,
     logout=logout_schema,
+    update_password=update_password_schema,
 )
 
 
