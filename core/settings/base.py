@@ -84,6 +84,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 SIMPLE_JWT = {
+    "ALGORITHM": "HS256",
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     'BLACKLIST_AFTER_ROTATION': True,

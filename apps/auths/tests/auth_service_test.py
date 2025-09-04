@@ -161,3 +161,13 @@ def test_blacklist_refresh_token_invalid():
     exc = exc_info.value
     assert exc.status_code == status.HTTP_400_BAD_REQUEST
     assert "invalid or already blacklisted" in str(exc)
+
+@pytest.mark.django_db
+def test_password_change_updates_timestamp():
+    user = Auth.objects.create_user(email="test@example.com", password="secure123")
+    old_timestamp = user.last_password_change
+
+    AuthService.update_password(user.id, "secure123", "newSecure123")
+
+    user.refresh_from_db()
+    assert user.last_password_change > old_timestamp
