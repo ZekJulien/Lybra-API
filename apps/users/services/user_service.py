@@ -43,3 +43,23 @@ class UserService:
         if UserService.is_unique_username(validated_data['username']):
             raise UserServiceError(UserMessage.USERNAME_TAKEN.value, status_code=status.HTTP_409_CONFLICT)
         return User.objects.create(id=auth, **validated_data)
+
+    @staticmethod
+    def update(user_id: UUID, updated_data: UserPayload) -> User:
+        """Update a user by ID."""
+        user = UserService.get_by_id(user_id)
+
+        new_username = updated_data['username']
+        if new_username and new_username != user.username:
+            if UserService.is_unique_username(new_username):
+                raise UserServiceError(
+                    UserMessage.USERNAME_TAKEN.value,
+                    status_code=status.HTTP_409_CONFLICT
+                )
+
+        for field, value in updated_data.items():
+            if value is not None: 
+                setattr(user, field, value)
+
+        user.save()
+        return user

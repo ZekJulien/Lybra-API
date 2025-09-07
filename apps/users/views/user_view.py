@@ -44,3 +44,23 @@ class UserView(ViewSet):
         """Retrieve all users."""
         serializer = UserSerializer(UserService.get_all_users(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put'], url_path='update', permission_classes=[IsAuthenticatedWithChecks])
+    def update_user(self, request):
+        """Endpoint to update current user."""
+        serializer = UserSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_user = UserService.update(request.user.id, serializer.validated_data)
+        return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put'], url_path=r'update/(?P<user_id>[0-9a-f-]{36})',
+            permission_classes=[IsAuthenticatedWithChecks, IsEmployeeOrAdmin])
+    def update_user_employee(self, request, user_id=None):
+        """Endpoint for admin or employee to update any user by ID via URL param."""
+        if not user_id:
+            return Response(UserMessage.MISSING_PARAMS.value, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = UserSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_user = UserService.update(user_id, serializer.validated_data)
+        return Response(UserSerializer(updated_user).data, status=status.HTTP_200_OK)

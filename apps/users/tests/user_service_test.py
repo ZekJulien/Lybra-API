@@ -78,3 +78,51 @@ def test_get_all_users_returns_list():
     assert isinstance(result, list)
     assert len(result) >= 2
     assert all(isinstance(user, User) for user in result)
+
+@pytest.mark.django_db
+def test_update_user_success():
+    auth = Auth.objects.create_user(email="test@example.com", password="pass")
+    user = User.objects.create(id=auth, username="oldusername", first_name="Old", last_name="Name")
+
+    updated_data = {
+        "username": "newusername",
+        "first_name": "NewFirst",
+        "last_name": "NewLast"
+    }
+
+    updated_user = UserService.update(user.id, updated_data)
+    assert updated_user.username == "newusername"
+    assert updated_user.first_name == "NewFirst"
+    assert updated_user.last_name == "NewLast"
+
+@pytest.mark.django_db
+def test_update_user_username_taken():
+    auth1 = Auth.objects.create_user(email="user1@example.com", password="pass")
+    auth2 = Auth.objects.create_user(email="user2@example.com", password="pass")
+
+    User.objects.create(id=auth1, username="takenusername")
+    user2 = User.objects.create(id=auth2, username="availableusername")
+
+    updated_data = {
+        "username": "takenusername",  # username déjà pris
+    }
+
+    with pytest.raises(UserServiceError) as excinfo:
+        UserService.update(user2.id, updated_data)
+    assert excinfo.value.status_code == 409
+    assert UserMessage.USERNAME_TAKEN.value in str(excinfo.value)
+
+@pytest.mark.django_db
+def test_update_ignores_none_fields():
+    auth = Auth.objects.create_user(email="test@example.com", password="pass")
+    user = User.objects.create(id=auth, username="originalname", first_name="Jean", last_name="Dupont")
+
+    updated_data = {
+        "username": "newusername",
+        "first_name": None,
+    }
+
+    updated_user = UserService.update(user.id, updated_data)
+
+    assert updated_user.username == "newusername"
+    assert updated_user.first_name == "Jean"
