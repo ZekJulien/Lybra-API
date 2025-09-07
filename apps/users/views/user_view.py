@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework import status
 
-from apps.auths.permissions import IsAuthenticatedWithChecks
-from apps.users.enums import UserMessage
+from apps.auths.permissions import IsAuthenticatedWithChecks, IsAdminUser
 from apps.users.schemas import user_schema
 from apps.users.serializers import UserSerializer
 from apps.users.services.user_service import UserService
@@ -25,4 +24,10 @@ class UserView(ViewSet):
         """Endpoint to get a user."""
         user = UserService.get_by_id(request.user.id)
         serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='get/all', permission_classes=[IsAuthenticatedWithChecks, IsAdminUser])
+    def get_all_users(self, request):
+        """Retrieve all users."""
+        serializer = UserSerializer(UserService.get_all_users(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
