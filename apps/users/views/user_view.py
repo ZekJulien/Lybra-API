@@ -19,3 +19,10 @@ class UserView(ViewSet):
         serializer.is_valid(raise_exception=True)
         user = UserService.add(request.user, serializer.validated_data)
         return Response(serializer.data(user), status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'], url_path='get', permission_classes=[IsAuthenticatedWithChecks])
+    def get(self, request):
+        """Endpoint to get a user."""
+        user = UserService.get_by_id(request.user.id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
