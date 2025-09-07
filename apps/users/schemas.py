@@ -28,6 +28,17 @@ get_all_users_schema = extend_schema(
     description="Retrieve a list of all users. Admin permission required."
 )
 
+get_by_id_schema = extend_schema(
+    responses={
+        200: UserSerializer,
+        400: OpenApiResponse(description="Missing or invalid 'pk' parameter"),
+        404: OpenApiResponse(description="User not found"),
+        403: OpenApiResponse(description="Forbidden: Admin or employee access required"),
+    },
+    summary="Retrieve a user by ID",
+    description="Endpoint to get a user by ID with 'pk' passed as a URL path parameter. Accessible only by authenticated employees and admins."
+)
+
 user_schema = extend_schema_view(
     add = add_user_schema,
     get = get_user_schema,

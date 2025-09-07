@@ -7,4 +7,5 @@ class UserMessage(Enum):
     INVALID_DATA = 'Données invalides.'
     USER_CREATED = 'Utilisateur créé avec succès.'
     USER_UPDATED = 'Utilisateur mis à jour.'
-    USER_EXISTS = 'Utilisateur existant.'
+    USER_EXISTS = 'Utilisateur existant.';
+    MISSING_PARAMS = 'Paramètre  manquant.';
