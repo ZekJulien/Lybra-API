@@ -1,6 +1,6 @@
 import pytest
-from auths.serializers import AuthSerializer
-from auths.models import Auth
+from apps.auths.serializers import AuthSerializer
+from apps.auths.models import Auth
 
 @pytest.mark.django_db
 def test_valid_password():

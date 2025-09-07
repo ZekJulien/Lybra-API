@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'core',
-    'auths'
+    'apps.auths',
+    'apps.users'
 ]
 
 
@@ -88,7 +89,7 @@ STATIC_URL = '/static/'
 
 SIMPLE_JWT = {
     "ALGORITHM": "HS256",
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     'BLACKLIST_AFTER_ROTATION': True,
     'ROTATE_REFRESH_TOKENS': True,

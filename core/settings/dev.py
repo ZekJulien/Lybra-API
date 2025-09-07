@@ -1,3 +1,5 @@
+from corsheaders.defaults import default_headers
+
 from .base import *
 
 DEBUG = True
@@ -45,3 +47,6 @@ SPECTACULAR_SETTINGS = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-refresh-attempted', ]

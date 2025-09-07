@@ -1,1 +1,2 @@
 from .auth_service_error import AuthServiceError
+from .user_service_error import UserServiceError

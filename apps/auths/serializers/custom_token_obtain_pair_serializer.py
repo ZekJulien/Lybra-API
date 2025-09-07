@@ -1,5 +1,5 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from auths.models import Auth
+from apps.auths.models import Auth
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """Custom serializer to include user role in the token and response."""
