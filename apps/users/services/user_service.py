@@ -4,7 +4,7 @@ from apps.auths.models import Auth
 from apps.users.enums import UserMessage
 from apps.users.models import User
 from apps.users.types import UserPayload
-from shared.exceptions.user_service_error import UserServiceError
+from shared.exceptions import UserServiceError
 from rest_framework import status
 
 
@@ -27,6 +27,12 @@ class UserService:
         if not user:
             raise UserServiceError(UserMessage.USER_NOT_FOUND.value, status_code=status.HTTP_404_NOT_FOUND)
         return User.objects.filter(id=user_id).first()
+
+    @staticmethod
+    def get_all_users() -> list[User]:
+        """Retrieve all users."""
+        return list(User.objects.all())
+
 
     @staticmethod
     def add(auth: Auth, validated_data : UserPayload) -> User:

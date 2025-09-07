@@ -64,3 +64,17 @@ def test_get_by_id_not_found():
     exc = excinfo.value
     assert exc.status_code == 404
     assert UserMessage.USER_NOT_FOUND.value in str(exc)
+
+@pytest.mark.django_db
+def test_get_all_users_returns_list():
+    auth1 = Auth.objects.create_user(email="a1@example.com", password="pass")
+    auth2 = Auth.objects.create_user(email="a2@example.com", password="pass")
+
+    User.objects.create(id=auth1, username="user1")
+    User.objects.create(id=auth2, username="user2")
+
+    result = UserService.get_all_users()
+
+    assert isinstance(result, list)
+    assert len(result) >= 2
+    assert all(isinstance(user, User) for user in result)
