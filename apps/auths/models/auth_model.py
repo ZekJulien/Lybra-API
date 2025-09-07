@@ -4,7 +4,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
-from auths.managers import AuthManager
+from apps.auths.managers import AuthManager
 
 class Auth(AbstractBaseUser, PermissionsMixin):
     """Custom user model with email as username and role-based constraints."""

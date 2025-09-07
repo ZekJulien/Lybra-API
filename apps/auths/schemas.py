@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from rest_framework import serializers
-from auths.serializers import AuthSerializer, UpdatePasswordSerializers, LogoutRequestSerializer, \
+from apps.auths.serializers import AuthSerializer, UpdatePasswordSerializers, LogoutRequestSerializer, \
     CustomTokenRefreshSerializer, CustomTokenObtainPairSerializer
 
 

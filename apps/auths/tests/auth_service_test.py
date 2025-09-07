@@ -5,8 +5,8 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from auths.services import AuthService
-from auths.models import Auth
+from apps.auths.services import AuthService
+from apps.auths.models import Auth
 from shared.exceptions import AuthServiceError
 from rest_framework import status
 

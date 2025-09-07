@@ -4,7 +4,7 @@ from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
-from auths.services import AuthService
+from apps.auths.services import AuthService
 
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     """Custom serializer to include user role and last password change in the refreshed token."""

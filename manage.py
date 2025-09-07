@@ -15,7 +15,6 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    sys.path.append(os.path.join(os.path.dirname(__file__), 'apps'))
     execute_from_command_line(sys.argv)
 
 

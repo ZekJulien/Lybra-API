@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.timezone import now
 
-from auths.models import Auth
+from apps.auths.models import Auth
 from shared.exceptions import AuthServiceError
 
 

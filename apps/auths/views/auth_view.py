@@ -3,11 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
-from auths.schemas import auth_schema
-from auths.serializers import AuthSerializer, UpdatePasswordSerializers, CustomTokenRefreshSerializer, \
+from apps.auths.schemas import auth_schema
+from apps.auths.serializers import AuthSerializer, UpdatePasswordSerializers, CustomTokenRefreshSerializer, \
     CustomTokenObtainPairSerializer
-from auths.services import AuthService
-from auths.permissions import IsFirstUser, IsAdminUser, IsAuthenticatedWithChecks
+from apps.auths.services import AuthService
+from apps.auths.permissions import IsFirstUser, IsAdminUser, IsAuthenticatedWithChecks
 
 
 @auth_schema

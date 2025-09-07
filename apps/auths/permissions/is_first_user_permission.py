@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from auths.models import Auth
+from apps.auths.models import Auth
 
 class IsFirstUser(BasePermission):
     """Allows access only if no users exist in the system."""
