@@ -42,3 +42,25 @@ def test_add_user_existing_username_raises():
     with pytest.raises(UserServiceError) as excinfo:
         UserService.add(auth2, data)
     assert excinfo.value.args[0] == UserMessage.USERNAME_TAKEN.value
+
+
+@pytest.mark.django_db
+def test_get_by_id_success():
+    auth = Auth.objects.create_user(email="test@example.com", password="testpassword")
+    user = User.objects.create(id=auth, username="testuser")
+
+    fetched_user = UserService.get_by_id(auth.id)
+
+    assert fetched_user == user
+    assert fetched_user.username == "testuser"
+
+
+@pytest.mark.django_db
+def test_get_by_id_not_found():
+    random_uuid = uuid4()
+    with pytest.raises(UserServiceError) as excinfo:
+        UserService.get_by_id(random_uuid)
+
+    exc = excinfo.value
+    assert exc.status_code == 404
+    assert UserMessage.USER_NOT_FOUND.value in str(exc)
