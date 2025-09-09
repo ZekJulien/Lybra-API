@@ -37,6 +37,6 @@ class AuthSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password_verification']:
             raise serializers.ValidationError("Passwords do not match.")
-        attrs.pop('confirmed_password', None)
+        attrs.pop('password_verification', None)
         return attrs
 

@@ -28,7 +28,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'core',
     'apps.auths',
-    'apps.users'
+    'apps.users',
+    'apps.books'
 ]
 
 
