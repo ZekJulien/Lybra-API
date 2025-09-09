@@ -1,8 +1,8 @@
 import uuid
 from django.db import models
 
-class Genre(models.Model):
-    """Model representing a book genre."""
+class Collection(models.Model):
+    """Model representing a book collection."""
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -11,6 +11,9 @@ class Genre(models.Model):
     )
     name = models.CharField(
         max_length=255,
-        unique=True,
         null=False,
+        unique=True,
+    )
+    description = models.TextField(
+        null=True,
     )
