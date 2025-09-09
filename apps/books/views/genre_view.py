@@ -7,6 +7,7 @@ from apps.books.schemas import genre_viewset_schema
 
 @genre_viewset_schema
 class GenreViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing genres."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = [IsAuthenticatedWithChecks, IsEmployeeOrAdmin]
