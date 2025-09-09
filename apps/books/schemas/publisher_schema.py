@@ -1,5 +1,4 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
-
 from apps.books.serializers import PublisherSerializer
 
 publisher_viewset_schema = extend_schema_view(

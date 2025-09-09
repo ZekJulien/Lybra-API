@@ -1,2 +1,3 @@
 from .author_serializer import AuthorSerializer
-from .publisher_model import PublisherSerializer
+from .publisher_serializer import PublisherSerializer
+from .genre_serializer import GenreSerializer

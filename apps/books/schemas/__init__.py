@@ -1,2 +1,3 @@
 from .author_schema import author_viewset_schema
 from .publisher_schema import publisher_viewset_schema
+from .genre_schema import genre_viewset_schema
