@@ -4,7 +4,7 @@ from rest_framework import serializers
 from apps.books.models import Author
 
 class AuthorSerializer(serializers.ModelSerializer):
-    '''Serializer for the Author model.'''
+    """Serializer for the Author model."""
     id = serializers.UUIDField(format='hex', read_only=True)
 
     class Meta:
