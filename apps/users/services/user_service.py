@@ -37,7 +37,6 @@ class UserService:
     @staticmethod
     def add(auth: Auth, validated_data : UserPayload) -> User:
         """Add a new user to the database."""
-        print(auth.id)
         if UserService.is_unique_user(auth.id):
             raise UserServiceError(UserMessage.USER_EXISTS.value, status_code=status.HTTP_409_CONFLICT)
         if UserService.is_unique_username(validated_data['username']):

@@ -1,3 +1,4 @@
 from .is_first_user_permission import IsFirstUser
 from .is_admin_user_permisson import IsAdminUser
 from .is_authenticated_with_check_permission import IsAuthenticatedWithChecks
+from .is_employee_or_admin_permission import IsEmployeeOrAdmin

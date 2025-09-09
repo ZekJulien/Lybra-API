@@ -4,6 +4,7 @@ from django.conf import settings
 urlpatterns = [
     path('auth/', include('apps.auths.urls')),
     path('user/', include('apps.users.urls')),
+    path('book/', include('apps.books.urls')),
 ]
 
 #region SWAGGER
