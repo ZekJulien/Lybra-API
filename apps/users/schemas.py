@@ -1,7 +1,4 @@
-from imaplib import Literal
-
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter
-from uuid import UUID
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
 from apps.users.enums import UserMessage
 from apps.users.serializers import UserSerializer
 
