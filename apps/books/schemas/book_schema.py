@@ -2,7 +2,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter
 
 from apps.books.enums import BookError, BookSchema
-from apps.books.serializers import BookSerializer, BookDetailSerializer
+from apps.books.serializers import BookSerializer, BookDetailSerializer, BookListSerializer, BookListLiteSerializer
 
 add_book_schema = extend_schema(
     request=BookSerializer,
@@ -29,11 +29,12 @@ get_all_schema = extend_schema(
         OpenApiParameter(name='themes__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_THEME_NAME_DESC.value),
         OpenApiParameter(name='page', type=OpenApiTypes.INT, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_PAGE_DESC.value),
         OpenApiParameter(name='ordering', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_ORDERING_DESC.value),
+        OpenApiParameter(name='expand', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description="Comma-separated: authors,genres,publishers,themes,collection"),
     ],
     responses={
         200: OpenApiResponse(
-            response=BookDetailSerializer(many=True),
-            description="List of books with full related data, paginated."
+            response=BookListLiteSerializer(many=True),
+            description="List of books. If 'expand' provided, relations are included."
         ),
         400: OpenApiResponse(description=BookError.INVALID_DATA.value),
         403: OpenApiResponse(description="Forbidden."),

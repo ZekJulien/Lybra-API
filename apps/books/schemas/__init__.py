@@ -4,3 +4,4 @@ from .genre_schema import genre_viewset_schema
 from .theme_schema import theme_viewset_schema
 from .collection_schema import collection_viewset_schema
 from .book_schema import book_viewset_schema
+from .book_copy_schema import bookcopy_viewset_schema
