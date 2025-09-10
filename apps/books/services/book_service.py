@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from apps.books.models import Book, Author, Genre, Publisher, Theme, Collection
 from django.db import transaction
+from django.db.models import Count, Q
 
 from apps.books.enums import BookError
 from apps.books.types import BookPayload
@@ -83,15 +84,17 @@ class BookService:
 
     @staticmethod
     def get_all():
-        """Service method to retrieve all books."""
-        return Book.objects.select_related('collection').prefetch_related(
-            'authors', 'genres', 'publishers', 'themes'
-        ).all()
+        """Service method to retrieve all books (lite by default)."""
+        return Book.objects.annotate(
+            available_copies_count=Count('copies', filter=Q(copies__status='available'))
+        ).order_by('isbn').all()
 
     @staticmethod
     def get_by_isbn(isbn) -> Book:
         """Service method to retrieve a single book by ISBN."""
-        book = Book.objects.filter(isbn=isbn).first()
+        book = Book.objects.select_related('collection').prefetch_related(
+            'authors', 'genres', 'publishers', 'themes', 'copies'
+        ).filter(isbn=isbn).first()
         if not book:
             raise ValidationError(BookError.BOOK_NOT_FOUND.value)
         return book

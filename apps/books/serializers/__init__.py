@@ -5,4 +5,7 @@ from .theme_serializer import ThemeSerializer
 from .collection_serializer import CollectionSerializer
 from .book_serializer import BookSerializer
 from .book_detail_serializer import BookDetailSerializer
+from .book_list_serializer import BookListSerializer
+from .book_list_lite_serializer import BookListLiteSerializer
 from .book_isbn_serializer import IsbnSerializer
+from .book_copy_serializer import BookCopySerializer

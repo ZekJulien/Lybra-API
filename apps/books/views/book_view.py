@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 
 from apps.auths.permissions import IsAuthenticatedWithChecks, IsEmployeeOrAdmin
 from apps.books import BookPagination
-from apps.books.serializers import BookSerializer, BookDetailSerializer, IsbnSerializer
+from apps.books.serializers import BookSerializer, BookDetailSerializer, IsbnSerializer, BookListSerializer, BookListLiteSerializer
 from apps.books.services import BookService
 from apps.books.schemas import book_viewset_schema
 
@@ -14,7 +14,10 @@ from apps.books.schemas import book_viewset_schema
 class BookViewSet(ViewSet):
     """ViewSet for managing Book entities."""
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['title', 'authors__name', 'publication_date', 'collection']
+    filterset_fields = [
+        'title', 'authors__name', 'publication_date', 'collection',
+        'language', 'pages', 'genres__name', 'publishers__name', 'themes__name'
+    ]
 
     @action(detail=False, methods=['post'], url_path='add' ,permission_classes=[IsAuthenticatedWithChecks, IsEmployeeOrAdmin])
     def add(self, request):
@@ -38,14 +41,28 @@ class BookViewSet(ViewSet):
     def get_all(self, request):
         """Retrieve all books with optional filtering and pagination."""
         queryset = BookService.get_all()
+        expand_param = request.query_params.get('expand', '')
+        expands = {key.strip() for key in expand_param.split(',') if key.strip()}
+        allowed_expands = {'authors', 'genres', 'publishers', 'themes', 'collection'}
+
+        # Conditional prefetch/select to avoid N+1 when expanding
+        if 'collection' in expands:
+            queryset = queryset.select_related('collection')
+        prefetch_relations = [rel for rel in ['authors', 'genres', 'publishers', 'themes'] if rel in expands]
+        if prefetch_relations:
+            queryset = queryset.prefetch_related(*prefetch_relations)
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         paginator = BookPagination()
         page = paginator.paginate_queryset(queryset, request, view=self)
         if page is not None:
-            serializer = BookDetailSerializer(page, many=True)
+            serializer_class = BookListSerializer if expands & allowed_expands else BookListLiteSerializer
+            context = {'expands': expands}
+            serializer = serializer_class(page, many=True, context=context)
             return paginator.get_paginated_response(serializer.data)
-        serializer = BookDetailSerializer(queryset, many=True)
+        serializer_class = BookListSerializer if expands & allowed_expands else BookListLiteSerializer
+        context = {'expands': expands}
+        serializer = serializer_class(queryset, many=True, context=context)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['put'], url_path='update_book', permission_classes=[IsAuthenticatedWithChecks, IsEmployeeOrAdmin])
