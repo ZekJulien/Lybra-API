@@ -74,3 +74,10 @@ class BookService:
             book.themes.set(themes)
 
         return book
+
+    @staticmethod
+    def get_all():
+        """Service method to retrieve all books."""
+        return Book.objects.select_related('collection').prefetch_related(
+            'authors', 'genres', 'publishers', 'themes'
+        ).all()
