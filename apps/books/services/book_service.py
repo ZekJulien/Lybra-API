@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.core.exceptions import ValidationError
 from apps.books.models import Book, Author, Genre, Publisher, Theme, Collection
 from django.db import transaction
@@ -81,3 +83,11 @@ class BookService:
         return Book.objects.select_related('collection').prefetch_related(
             'authors', 'genres', 'publishers', 'themes'
         ).all()
+
+    @staticmethod
+    def get_by_isbn(isbn) -> Book:
+        """Service method to retrieve a single book by ISBN."""
+        book = Book.objects.filter(isbn=isbn).first()
+        if not book:
+            raise ValidationError(BookError.BOOK_NOT_FOUND.value)
+        return book

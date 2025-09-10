@@ -15,33 +15,54 @@ add_book_schema = extend_schema(
     summary=BookSchema.ADD_BOOK_SUMMARY.value,
     description=BookSchema.ADD_BOOK_DESCRIPTION.value,
 )
+
 get_all_schema = extend_schema(
     parameters=[
-        OpenApiParameter(name='title', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by book title'),
-        OpenApiParameter(name='authors__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by author name'),
-        OpenApiParameter(name='publication_date', type=OpenApiTypes.DATE, location=OpenApiParameter.QUERY, required=False, description='Filter by publication date'),
-        OpenApiParameter(name='collection', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by collection ID'),
-        OpenApiParameter(name='language', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by language code (e.g. "fr", "en")'),
-        OpenApiParameter(name='pages', type=OpenApiTypes.INT, location=OpenApiParameter.QUERY, required=False, description='Filter by number of pages'),
-        OpenApiParameter(name='genres__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by genre name'),
-        OpenApiParameter(name='publishers__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by publisher name'),
-        OpenApiParameter(name='themes__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Filter by theme name'),
-        OpenApiParameter(name='page', type=OpenApiTypes.INT, location=OpenApiParameter.QUERY, required=False, description='Page number for pagination'),
-        OpenApiParameter(name='ordering', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description='Ordering field (e.g. "title", "-publication_date")'),
+        OpenApiParameter(name='title', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_TITLE_DESC.value),
+        OpenApiParameter(name='authors__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_AUTHOR_NAME_DESC.value),
+        OpenApiParameter(name='publication_date', type=OpenApiTypes.DATE, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_PUBLICATION_DATE_DESC.value),
+        OpenApiParameter(name='collection', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_COLLECTION_DESC.value),
+        OpenApiParameter(name='language', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_LANGUAGE_DESC.value),
+        OpenApiParameter(name='pages', type=OpenApiTypes.INT, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_PAGES_DESC.value),
+        OpenApiParameter(name='genres__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_GENRE_NAME_DESC.value),
+        OpenApiParameter(name='publishers__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_PUBLISHER_NAME_DESC.value),
+        OpenApiParameter(name='themes__name', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_THEME_NAME_DESC.value),
+        OpenApiParameter(name='page', type=OpenApiTypes.INT, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_PAGE_DESC.value),
+        OpenApiParameter(name='ordering', type=OpenApiTypes.STR, location=OpenApiParameter.QUERY, required=False, description=BookSchema.PARAM_ORDERING_DESC.value),
     ],
     responses={
         200: OpenApiResponse(
             response=BookDetailSerializer(many=True),
             description="List of books with full related data, paginated."
         ),
-        400: OpenApiResponse(description="Invalid query parameters."),
-        403: OpenApiResponse(description="Forbidden.")
+        400: OpenApiResponse(description=BookError.INVALID_DATA.value),
+        403: OpenApiResponse(description="Forbidden."),
     },
-    summary="Retrieve a paginated list of books",
-    description="Returns a paginated list of books including authors, genres, publishers, themes, and collection details. Supports filtering and ordering via query parameters."
+    summary=BookSchema.GET_ALL_SUMMARY.value,
+    description=BookSchema.GET_ALL_DESCRIPTION.value,
+)
+
+get_by_isbn_schema = extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='isbn',
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.PATH,
+            required=True,
+            description=BookSchema.PARAM_ISBN_DESC.value,
+        ),
+    ],
+    responses={
+        200: OpenApiResponse(response=BookDetailSerializer, description="Book details retrieved successfully"),
+        400: OpenApiResponse(description=BookError.INVALID_ISBN_FORMAT.value),
+        404: OpenApiResponse(description=BookError.BOOK_NOT_FOUND.value),
+    },
+    summary=BookSchema.GET_BY_ID_SUMMARY.value,
+    description=BookSchema.GET_BY_ID_DESCRIPTION.value,
 )
 
 book_viewset_schema = extend_schema_view(
     add=add_book_schema,
-    get_all=get_all_schema
+    get_all=get_all_schema,
+    get_by_id=get_by_isbn_schema,
 )

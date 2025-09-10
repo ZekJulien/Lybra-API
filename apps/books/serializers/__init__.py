@@ -5,3 +5,4 @@ from .theme_serializer import ThemeSerializer
 from .collection_serializer import CollectionSerializer
 from .book_serializer import BookSerializer
 from .book_detail_serializer import BookDetailSerializer
+from .book_isbn_serializer import IsbnSerializer

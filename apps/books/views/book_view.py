@@ -6,24 +6,33 @@ from rest_framework.viewsets import ViewSet
 
 from apps.auths.permissions import IsAuthenticatedWithChecks, IsEmployeeOrAdmin
 from apps.books import BookPagination
-from apps.books.schemas.book_schema import get_all_schema
-from apps.books.serializers import BookSerializer, BookDetailSerializer
+from apps.books.serializers import BookSerializer, BookDetailSerializer, IsbnSerializer
 from apps.books.services import BookService
 from apps.books.schemas import book_viewset_schema
 
 @book_viewset_schema
 class BookViewSet(ViewSet):
+    """ViewSet for managing Book entities."""
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title', 'authors__name', 'publication_date', 'collection']
 
-    """ViewSet for managing Book entities."""
     @action(detail=False, methods=['post'], url_path='add' ,permission_classes=[IsAuthenticatedWithChecks, IsEmployeeOrAdmin])
     def add(self, request):
+        """Add a new book to the database."""
         serializer = BookSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         book = BookService.add(serializer.validated_data)
         book_detail_serializer = BookDetailSerializer(book)
         return Response(book_detail_serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'], url_path=r'get_by_id/(?P<isbn>.+)')
+    def get(self, request, isbn=None):
+        """Retrieve a book by its ISBN."""
+        serializer = IsbnSerializer(data={'isbn': isbn})
+        serializer.is_valid(raise_exception=True)
+        book = BookService.get_by_isbn(serializer.validated_data['isbn'])
+        book_serializer = BookDetailSerializer(book)
+        return Response(book_serializer.data)
 
     @action(detail=False, methods=['get'], url_path='get_all')
     def get_all(self, request):
