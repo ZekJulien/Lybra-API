@@ -1,2 +1,3 @@
 from .auth_service_error import AuthServiceError
 from .user_service_error import UserServiceError
+from .book_service_error import BookServiceError
