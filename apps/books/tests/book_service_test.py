@@ -195,3 +195,25 @@ def test_update_book_not_found():
     with pytest.raises(ValidationError) as excinfo:
         BookService.update(data)
     assert BookError.BOOK_NOT_FOUND.value in str(excinfo.value)
+
+@pytest.mark.django_db
+def test_delete_book_success():
+    collection = Collection.objects.create(name="Test Collection")
+    book = Book.objects.create(
+        isbn="1234567890123",
+        title="Titre",
+        summary="Résumé",
+        language="fr",
+        publication_date="2020-01-01",
+        pages=100,
+        collection=collection,
+    )
+    BookService.delete(book.isbn)
+
+    assert Book.objects.filter(pk=book.pk).count() == 0
+
+@pytest.mark.django_db
+def test_delete_book_not_found():
+    with pytest.raises(ValidationError) as excinfo:
+        BookService.delete("nonexistentisbn")
+    assert BookError.BOOK_NOT_FOUND.value in str(excinfo.value)

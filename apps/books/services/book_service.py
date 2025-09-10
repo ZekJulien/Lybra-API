@@ -137,3 +137,12 @@ class BookService:
             book.themes.clear()
 
         return book
+
+    @staticmethod
+    @transaction.atomic
+    def delete(isbn: str):
+        """Service method to delete a book by ISBN."""
+        book = Book.objects.filter(isbn=isbn).first()
+        if not book:
+            raise ValidationError(BookError.BOOK_NOT_FOUND.value)
+        book.delete()

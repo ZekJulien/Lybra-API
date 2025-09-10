@@ -72,9 +72,21 @@ update_book_schema = extend_schema(
     description="Updates an existing book identified by ISBN with the provided data.",
 )
 
+delete_book_schema = extend_schema(
+    responses={
+        204: OpenApiResponse(description="Book deleted successfully"),
+        404: OpenApiResponse(description=BookError.BOOK_NOT_FOUND.value),
+    },
+    summary="Delete a book by ISBN",
+    description="Deletes the book identified by the given ISBN. Returns 204 No Content on success.",
+)
+
 book_viewset_schema = extend_schema_view(
     add=add_book_schema,
     get_all=get_all_schema,
     get=get_by_isbn_schema,
     update_book=update_book_schema,
+    delete_book=delete_book_schema,
 )
+
+
