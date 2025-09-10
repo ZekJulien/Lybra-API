@@ -131,3 +131,67 @@ def test_get_all_returns_books_with_relations():
     assert list(result_book.publishers.all()) == [publisher]
     assert list(result_book.themes.all()) == [theme]
     assert result_book.collection == collection
+
+@pytest.mark.django_db
+def test_update_book_success():
+    collection = Collection.objects.create(name="Collection Test")
+    author = Author.objects.create(name="Auteur Test")
+    genre = Genre.objects.create(name="Genre Test")
+    publisher = Publisher.objects.create(name="Publisher Test")
+    theme = Theme.objects.create(name="Theme Test")
+
+    book = Book.objects.create(
+        isbn="1234567890123",
+        title="Old Title",
+        summary="Old Summary",
+        language="fr",
+        publication_date="2020-01-01",
+        pages=100,
+        collection=collection,
+    )
+    book.authors.add(author)
+    book.genres.add(genre)
+    book.publishers.add(publisher)
+    book.themes.add(theme)
+
+    new_collection = Collection.objects.create(name="Nouvelle Collection")
+    new_author = Author.objects.create(name="Nouvel Auteur")
+    new_genre = Genre.objects.create(name="Nouveau Genre")
+    new_publisher = Publisher.objects.create(name="Nouveau Publisher")
+    new_theme = Theme.objects.create(name="Nouveau Theme")
+
+    data = {
+        "isbn": book.isbn,
+        "title": "New Title",
+        "summary": "New Summary",
+        "language": "en",
+        "publication_date": "2025-01-01",
+        "cover_url": "https://example.com/cover.jpg",
+        "pages": 200,
+        "collection": str(new_collection.pk),
+        "authors": [str(new_author.pk)],
+        "genres": [str(new_genre.pk)],
+        "publishers": [str(new_publisher.pk)],
+        "themes": [str(new_theme.pk)],
+    }
+
+    updated_book = BookService.update(data)
+
+    assert updated_book.pk == book.pk
+    assert updated_book.title == "New Title"
+    assert updated_book.summary == "New Summary"
+    assert updated_book.language == "en"
+    assert str(updated_book.collection.pk) == str(new_collection.pk)
+    assert updated_book.pages == 200
+    assert updated_book.cover_url == "https://example.com/cover.jpg"
+    assert set(a.pk for a in updated_book.authors.all()) == {new_author.pk}
+    assert set(g.pk for g in updated_book.genres.all()) == {new_genre.pk}
+    assert set(p.pk for p in updated_book.publishers.all()) == {new_publisher.pk}
+    assert set(t.pk for t in updated_book.themes.all()) == {new_theme.pk}
+
+@pytest.mark.django_db
+def test_update_book_not_found():
+    data = {"isbn": "nonexistentisbn", "collection": "some-uuid"}
+    with pytest.raises(ValidationError) as excinfo:
+        BookService.update(data)
+    assert BookError.BOOK_NOT_FOUND.value in str(excinfo.value)

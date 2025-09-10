@@ -39,6 +39,7 @@ get_by_id_schema = extend_schema(
 )
 
 update_user_schema = extend_schema(
+    operation_id="updateCurrentUser",
     request=UserSerializer,
     responses={
         200: UserSerializer,
@@ -51,6 +52,7 @@ update_user_schema = extend_schema(
 )
 
 update_user_employee_schema = extend_schema(
+    operation_id="updateUserByIdForAdmin",
     request=UserSerializer,
     responses={
         200: UserSerializer,

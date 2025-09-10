@@ -61,8 +61,20 @@ get_by_isbn_schema = extend_schema(
     description=BookSchema.GET_BY_ID_DESCRIPTION.value,
 )
 
+update_book_schema = extend_schema(
+    request=BookSerializer,
+    responses={
+        200: BookDetailSerializer,
+        400: OpenApiResponse(description=BookError.INVALID_DATA.value),
+        404: OpenApiResponse(description=BookError.BOOK_NOT_FOUND.value),
+    },
+    summary="Update an existing book",
+    description="Updates an existing book identified by ISBN with the provided data.",
+)
+
 book_viewset_schema = extend_schema_view(
     add=add_book_schema,
     get_all=get_all_schema,
-    get_by_id=get_by_isbn_schema,
+    get=get_by_isbn_schema,
+    update_book=update_book_schema,
 )
