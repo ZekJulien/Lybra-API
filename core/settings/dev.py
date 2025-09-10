@@ -42,6 +42,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API Django REST',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SHOW_ERRORS': True,
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -50,3 +51,8 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-refresh-attempted', ]
+
+SPECTACULAR_SETTINGS = {
+    'SHOW_ERRORS': True,
+    'SERVE_INCLUDE_SCHEMA': False,
+}
