@@ -3,6 +3,7 @@ from enum import Enum
 class BookError(Enum):
     COLLECTION_NOT_FOUND = "Collection not found in the database."
     AUTHORS_NOT_FOUND = "One or more authors are missing."
+    BOOK_NOT_FOUND = "Book not found in the database."
     GENRES_NOT_FOUND = "One or more genres are missing."
     PUBLISHERS_NOT_FOUND = "One or more publishers are missing."
     THEMES_NOT_FOUND = "One or more themes are missing."
@@ -12,5 +13,6 @@ class BookError(Enum):
     INVALID_DATE_FORMAT = "The date format is invalid, must be YYYY-MM-DD."
     INVALID_INTEGER_VALUE = "Invalid integer value."
     GENERIC_VALIDATION_ERROR = "Unknown validation error."
-    INVALID_DATA = "Invalid or missing data."
-    ALREADY_EXIST_BOOK = "Book already exists."
+    INVALID_DATA = "Invalid data provided"
+    ALREADY_EXIST_BOOK = "Book already exists"
+    INVALID_ISBN_FORMAT = "Invalid ISBN format"
