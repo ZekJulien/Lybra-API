@@ -6,6 +6,7 @@ from rest_framework.viewsets import ViewSet
 
 from apps.auths.permissions import IsAuthenticatedWithChecks, IsEmployeeOrAdmin
 from apps.books import BookPagination
+from apps.books.schemas.book_schema import get_by_isbn_schema
 from apps.books.serializers import BookSerializer, BookDetailSerializer, IsbnSerializer
 from apps.books.services import BookService
 from apps.books.schemas import book_viewset_schema
@@ -47,3 +48,13 @@ class BookViewSet(ViewSet):
             return paginator.get_paginated_response(serializer.data)
         serializer = BookDetailSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=['put'], url_path='update_book', permission_classes=[IsAuthenticatedWithChecks, IsEmployeeOrAdmin])
+    def update_book(self, request):
+        """ Update an existing book's details."""
+        serializer = BookSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        book = BookService.update(serializer.validated_data)
+        response_serializer = BookDetailSerializer(book)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
